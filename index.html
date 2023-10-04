@@ -2,13 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Animated Dots Over Image</title>
+    <title>Network Visualizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-    <input type="file" id="csv-file-input" accept=".csv" />
-    <button id="read-csv">Read CSV</button>
+    <nav class="navbar navbar-light sticky-top bg-light">
+        <span class="navbar-brand mb-0 h1 p-2">
+            Network Visualizer
+        </span>
+    </nav>
+    <div class="custom-file">
+        <input class="form-control w-25" 
+               type="file" 
+               accept=".csv"
+               id="csv-file-input">
+        <button 
+            id="read-csv" 
+            type="button" 
+            class="btn btn-secondary"
+        >
+            Run Animation
+        </button>
+    </div>
     <div class="container">
         <img src="csebuilding.png" id="background-image">
         <div class="dot-container" id="dot-container"></div>
