@@ -64,6 +64,8 @@ runAnimationButton.addEventListener('click', function () {
         await animateDots(lines);
 
         runAnimationButton.disabled = false;
+
+        alert("Animation Finished!");
       };
       
       // Read the CSV file as text
