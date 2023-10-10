@@ -5,16 +5,7 @@ const resizableImage = document.getElementById('background-image');
 let svg  = null;
 
 // mapping for room number to x,y offset on screen
-const map = {
-  "2232": [900,150],
-  "2234": [900,200],
-  "2236": [900,250],
-  "2238": [900,290],
-  "2244": [925,325],
-  "2246": [925,345],
-  "2248": [925,365],
-  "2250": [925,365],
-}
+const roomToPositionMapping = {};
 
 window.addEventListener('load', () => {
   const dotContainer = document.getElementById('dot-container');
@@ -40,6 +31,23 @@ window.addEventListener('load', () => {
   // Call the function initially and whenever the window is resized
   window.addEventListener('resize', resizeDivs);
   resizeDivs();
+
+  // starting code to initialize the room mapping
+  for (let i = 2202; i <= 2274; i += 2) {
+    roomToPositionMapping[i+""] = [-1,-1];
+  }
+
+  for (let i = 2203; i <= 2239; i += 2) {
+    roomToPositionMapping[i+""] = [-1,-1];
+  }
+
+  for (let i = 2102; i <= 2154; i += 2) {
+    roomToPositionMapping[i+""] = [-1,-1];
+  }
+
+  for (let i = 2115; i <= 2131; i += 2) {
+    roomToPositionMapping[i+""] = [-1,-1];
+  }
 });
 
 runAnimationButton.addEventListener('click', function () {
