@@ -26,28 +26,17 @@ window.addEventListener('load', () => {
           .append('svg')
           .attr('width', imageWidth)
           .attr('height', imageHeight);
+
+      // room mapping
+      roomToPositionMapping["3152"] = [parseInt(0.55*resizableImage.clientWidth), parseInt(0.8*resizableImage.clientHeight)]
+      roomToPositionMapping["3102"] = [parseInt(0.57*resizableImage.clientWidth), parseInt(0.6*resizableImage.clientHeight)]
+      roomToPositionMapping["3219B"] = [parseInt(0.73*resizableImage.clientWidth), parseInt(0.525*resizableImage.clientHeight)]
+      roomToPositionMapping["3219T"] = [parseInt(0.73*resizableImage.clientWidth), parseInt(0.325*resizableImage.clientHeight)]
   }
 
   // Call the function initially and whenever the window is resized
   window.addEventListener('resize', resizeDivs);
   resizeDivs();
-
-  // starting code to initialize the room mapping
-  for (let i = 2202; i <= 2274; i += 2) {
-    roomToPositionMapping[i+""] = [-1,-1];
-  }
-
-  for (let i = 2203; i <= 2239; i += 2) {
-    roomToPositionMapping[i+""] = [-1,-1];
-  }
-
-  for (let i = 2102; i <= 2154; i += 2) {
-    roomToPositionMapping[i+""] = [-1,-1];
-  }
-
-  for (let i = 2115; i <= 2131; i += 2) {
-    roomToPositionMapping[i+""] = [-1,-1];
-  }
 });
 
 runAnimationButton.addEventListener('click', function () {
@@ -84,13 +73,18 @@ runAnimationButton.addEventListener('click', function () {
 });
 
 function animateDot(line, delay) {
+  const keysArr = Object.keys(roomToPositionMapping);
+
   return new Promise((resolve) => {
     setTimeout(() => {
+      const randomIndexStart = Math.floor(Math.random() * keysArr.length);
+      const randomIndexEnd = Math.floor(Math.random() * keysArr.length);
+
       // Create the dot (circle) and set its initial position
       const dot = svg
         .append("circle")
-        .attr("cx", parseInt(Math.random()*resizableImage.clientWidth))
-        .attr("cy", parseInt(Math.random()*resizableImage.clientHeight))
+        .attr("cx", roomToPositionMapping[keysArr[randomIndexStart]][0])
+        .attr("cy", roomToPositionMapping[keysArr[randomIndexStart]][1])
         .attr("r", 5)
         .attr("fill", "red");
 
@@ -98,8 +92,8 @@ function animateDot(line, delay) {
       dot
         .transition()
         .duration(3000)
-        .attr("cx", parseInt(Math.random()*resizableImage.clientWidth))
-        .attr("cy", parseInt(Math.random()*resizableImage.clientHeight))
+        .attr("cx", roomToPositionMapping[keysArr[randomIndexEnd]][0])
+        .attr("cy", roomToPositionMapping[keysArr[randomIndexEnd]][1])
         .remove()
         .on("end", () => {
           resolve(); // Resolve the Promise when the animation is done
@@ -114,7 +108,7 @@ async function animateDots(lines) {
 
   for (const line of lines) {
     animationPromises.push(animateDot(line, delay));
-    delay += 3000; // Adjust this value to control the gap between dots
+    delay += 3500; // Adjust this value to control the gap between dots
   }
 
   // Wait for all animations to complete
