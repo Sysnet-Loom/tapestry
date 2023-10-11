@@ -42,18 +42,14 @@ window.addEventListener('load', () => {
 runAnimationButton.addEventListener('click', function () {
     runAnimationButton.disabled = true;
 
-    const inputElement = document.getElementById('csv-file-input');
-    
-    // Check if a file has been selected
-    if (inputElement.files.length > 0) {
-      const file = inputElement.files[0];
-      
-      // Create a FileReader object
-      const reader = new FileReader();
-      
-      reader.onload = async function (e) {
-        const csvData = e.target.result;
-        
+    fetch('Loom-Time-Series-Data - Sheet1.csv')
+      .then(response => {
+        if (!response.ok) {
+          alert(`Failed to fetch CSV file: ${response.status} ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(async csvData => {
         // Split the CSV data into lines
         const lines = csvData.split('\n');
 
@@ -63,13 +59,10 @@ runAnimationButton.addEventListener('click', function () {
         runAnimationButton.disabled = false;
 
         alert("Animation Finished!");
-      };
-      
-      // Read the CSV file as text
-      reader.readAsText(file);
-    } else {
-      alert('Please select a CSV file first.');
-    }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
 });
 
 function animateDot(line, delay) {

@@ -14,10 +14,13 @@
         </span>
     </nav>
     <div class="custom-file">
-        <input class="form-control w-25" 
-               type="file" 
-               accept=".csv"
-               id="csv-file-input">
+        <div class="form-group w-25">
+            <label class="mb-1" for="csv-file-input">Upload Mapping:</label>
+            <input class="form-control w-100" 
+                   type="file" 
+                   accept=".csv"
+                   id="csv-file-input">
+        </div>
         <button 
             id="read-csv" 
             type="button" 
