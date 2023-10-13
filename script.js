@@ -2,10 +2,47 @@ const dotRadius = 10;
 const dotColor = "blue";
 const runAnimationButton = document.getElementById('read-csv');
 const resizableImage = document.getElementById('background-image');
+const fileSelector = document.getElementById('csv-file-input');
 let svg  = null;
 
 // mapping for room number to x,y offset on screen
 const roomToPositionMapping = {};
+
+const nodeToRoomMapping = {
+  "0": "3152",
+  "1": "3102",
+  "2": "3219B"
+};
+
+fileSelector.addEventListener('click', (e) => {
+  e.target.value = null;
+});
+
+fileSelector.addEventListener('input', (e) => {
+  const selectedFile = fileSelector.files[0];
+
+  if (!selectedFile) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const csvData = e.target.result;
+
+    console.log(csvData);
+
+    const lines = csvData.split('\n').map(line => line.trim());
+    
+    for(let i = 0; i < lines.length; i++) {
+      const data = lines[i].split(',');
+
+      nodeToRoomMapping[data[0]] = data[1];
+    }
+  };
+
+  reader.readAsText(selectedFile);
+})
 
 window.addEventListener('load', () => {
   const dotContainer = document.getElementById('dot-container');
@@ -51,7 +88,7 @@ runAnimationButton.addEventListener('click', function () {
       })
       .then(async csvData => {
         // Split the CSV data into lines
-        const lines = csvData.split('\n');
+        const lines = csvData.split('\n').map(line => line.trim());
 
         // Call the animateDots function with your 'lines' array
         await animateDots(lines);
@@ -66,27 +103,22 @@ runAnimationButton.addEventListener('click', function () {
 });
 
 function animateDot(line, delay) {
-  const keysArr = Object.keys(roomToPositionMapping);
-
   return new Promise((resolve) => {
     setTimeout(() => {
-      const randomIndexStart = Math.floor(Math.random() * keysArr.length);
-      const randomIndexEnd = Math.floor(Math.random() * keysArr.length);
-
       // Create the dot (circle) and set its initial position
       const dot = svg
         .append("circle")
-        .attr("cx", roomToPositionMapping[keysArr[randomIndexStart]][0])
-        .attr("cy", roomToPositionMapping[keysArr[randomIndexStart]][1])
+        .attr("cx", roomToPositionMapping[nodeToRoomMapping[line[1]]][0])
+        .attr("cy", roomToPositionMapping[nodeToRoomMapping[line[1]]][1])
         .attr("r", 5)
         .attr("fill", "red");
 
       // Transition the dot's position
       dot
         .transition()
-        .duration(3000)
-        .attr("cx", roomToPositionMapping[keysArr[randomIndexEnd]][0])
-        .attr("cy", roomToPositionMapping[keysArr[randomIndexEnd]][1])
+        .duration(1000)
+        .attr("cx", roomToPositionMapping[nodeToRoomMapping[line[2]]][0])
+        .attr("cy", roomToPositionMapping[nodeToRoomMapping[line[2]]][1])
         .remove()
         .on("end", () => {
           resolve(); // Resolve the Promise when the animation is done
@@ -96,19 +128,17 @@ function animateDot(line, delay) {
 }
 
 async function animateDots(lines) {
-  let delay = 0; // Initial delay for the first dot
   const animationPromises = [];
 
-  for (const line of lines) {
-    animationPromises.push(animateDot(line, delay));
-    delay += 3500; // Adjust this value to control the gap between dots
+  for (let i = 1; i < lines.length; i++) {
+    const data = lines[i].split(",");
+
+    // times 1000 here since test CSV file increments time by 1
+    animationPromises.push(animateDot(data, parseInt(data[0])*1000));
   }
 
   // Wait for all animations to complete
   await Promise.all(animationPromises);
-
-  // All animations are now finished
-  console.log("All animations are completed.");
 }
   
   
