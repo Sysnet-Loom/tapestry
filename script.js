@@ -106,15 +106,19 @@ function animateDot(line, delay) {
   return new Promise((resolve) => {
     setTimeout(() => {
       // Create the dot (circle) and set its initial position
-      const dot = svg
+
+      let dot;
+
+      if(line[3] === "MLE") {
+        dot = svg
         .append("circle")
         .attr("cx", roomToPositionMapping[nodeToRoomMapping[line[1]]][0])
         .attr("cy", roomToPositionMapping[nodeToRoomMapping[line[1]]][1])
         .attr("r", 5)
         .attr("fill", "red");
 
-      // Transition the dot's position
-      dot
+        // Transition the dot's position
+        dot
         .transition()
         .duration(1000)
         .attr("cx", roomToPositionMapping[nodeToRoomMapping[line[2]]][0])
@@ -123,6 +127,25 @@ function animateDot(line, delay) {
         .on("end", () => {
           resolve(); // Resolve the Promise when the animation is done
         });
+      } else {
+        dot = svg
+        .append("rect")
+          .attr("x", roomToPositionMapping[nodeToRoomMapping[line[1]]][0])
+          .attr("y", roomToPositionMapping[nodeToRoomMapping[line[1]]][1])
+          .attr("width", 20)
+          .attr("height", 20)
+          .attr("fill", "green");
+
+        dot
+          .transition()
+          .duration(1000)
+          .attr("x", roomToPositionMapping[nodeToRoomMapping[line[2]]][0])
+          .attr("y", roomToPositionMapping[nodeToRoomMapping[line[2]]][1])
+          .remove()
+          .on("end", () => {
+            resolve(); // Resolve the Promise when the animation is done
+          });
+      }
     }, delay);
   });
 }
@@ -133,12 +156,11 @@ async function animateDots(lines) {
   for (let i = 1; i < lines.length; i++) {
     const data = lines[i].split(",");
 
-    // times 1000 here since test CSV file increments time by 1
-    animationPromises.push(animateDot(data, parseInt(data[0])*1000));
-  }
+    let delay = parseInt(data[0]) - (i > 1 ? parseInt(lines[i-1].split(",")[0]) : 0);
 
-  // Wait for all animations to complete
-  await Promise.all(animationPromises);
+    // times 1000 here since test CSV file increments time by 1
+    await animateDot(data, delay * 1000);
+  }
 }
   
   
